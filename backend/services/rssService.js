@@ -58,14 +58,8 @@ const checkIsBreaking = (title, contentSnippet) => {
  */
 export const syncRSSFeeds = async () => {
   console.log('Starting RSS feeds sync...');
-  const sources = await Source.find({});
-  const categories = await Category.find({});
-
-  if (sources.length === 0 || categories.length === 0) {
-    console.log('No sources or categories configured. Skipping sync.');
-    return { success: false, message: 'Sources or Categories not seeded' };
-  }
-
+  const sources = await Source.find({ isActive: true });
+  const categories = await Category.find();
   const results = {
     totalProcessed: 0,
     newArticles: 0,
@@ -97,24 +91,18 @@ export const syncRSSFeeds = async () => {
           continue;
         }
 
-        // Parse content
-        const title = item.title || 'No Title';
-        const description = item.contentSnippet || item.summary || item.content || '';
-        const content = item.content || item.contentSnippet || '';
+        // Parse & Clean content
+        const rawTitle = item.title || 'No Title';
+        const title = decodeHTMLEntities(rawTitle);
+
+        const rawDescription = item.contentSnippet || item.summary || item.content || '';
+        const description = decodeHTMLEntities(rawDescription.replace(/<[^>]*>/g, '')).slice(0, 500);
+
+        const rawContent = item.content || item.contentSnippet || '';
+        const content = decodeHTMLEntities(rawContent.replace(/<[^>]*>/g, '')).slice(0, 2000);
         
-        // Attempt to extract image URL from enclosures or standard tags
-        let imageUrl = null;
-        if (item.enclosure && item.enclosure.url) {
-          imageUrl = item.enclosure.url;
-        } else if (item.mediaContent && item.mediaContent.$ && item.mediaContent.$.url) {
-          imageUrl = item.mediaContent.$.url;
-        } else {
-          // Fallback parsing: look for img src tag in content
-          const imgMatch = content.match(/<img[^>]+src="([^">]+)"/);
-          if (imgMatch) {
-            imageUrl = imgMatch[1];
-          }
-        }
+        // Advanced image URL extraction
+        const imageUrl = extractImageUrlFromItem(item);
 
         // Text & Category Heuristics Processing
         const categoryName = await classifyCategory(title, description, categories);
@@ -126,8 +114,8 @@ export const syncRSSFeeds = async () => {
 
         const newArticle = new Article({
           title,
-          description: description.replace(/<[^>]*>/g, '').slice(0, 500),
-          content: content.replace(/<[^>]*>/g, '').slice(0, 2000),
+          description,
+          content,
           url: articleUrl,
           imageUrl,
           pubDate: item.pubDate ? new Date(item.pubDate) : new Date(),

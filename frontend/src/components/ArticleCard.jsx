@@ -5,6 +5,7 @@ import { FiBookmark, FiHeart, FiEye, FiClock, FiShare2 } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
 import { formatRelativeTime } from '../utils/formatDate.js';
+import { decodeHTMLEntities, getCategoryFallbackImage } from '../utils/decodeHtml.js';
 import API from '../services/api.js';
 
 const ArticleCard = ({ article, isBookmarkedPage = false }) => {
@@ -29,13 +30,11 @@ const ArticleCard = ({ article, isBookmarkedPage = false }) => {
     }
   }, [user, article._id, isBookmarkedPage]);
 
-  // If not on bookmarks page, check if bookmark status is available (can verify via API or local caches)
+  // If not on bookmarks page, check if bookmark status is available
   useEffect(() => {
     const checkBookmarkStatus = async () => {
       if (user && !isBookmarkedPage) {
         try {
-          // A quick API call or we can assume false unless checked
-          // To minimize API calls, we can fetch user bookmarks on app start and save them in state, or just let API run
         } catch (e) {
           console.error(e);
         }
@@ -92,7 +91,6 @@ const ArticleCard = ({ article, isBookmarkedPage = false }) => {
         url: article.url,
       }).catch(err => console.log('Share error:', err));
     } else {
-      // Fallback
       navigator.clipboard.writeText(article.url);
       alert('Article link copied to clipboard!');
     }
@@ -102,19 +100,11 @@ const ArticleCard = ({ article, isBookmarkedPage = false }) => {
     navigate(`/article/${article._id}`);
   };
 
-  // Fallback image url based on category if source does not provide one
-  const categoryImages = {
-    'technology': 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=600&auto=format&fit=crop',
-    'science': 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop',
-    'sports': 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=600&auto=format&fit=crop',
-    'business': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600&auto=format&fit=crop',
-    'world': 'https://images.unsplash.com/photo-1526470608268-f674ce90ebd4?q=80&w=600&auto=format&fit=crop',
-    'entertainment': 'https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?q=80&w=600&auto=format&fit=crop',
-    'health': 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=600&auto=format&fit=crop',
-  };
-
   const categorySlug = article.category?.slug || 'world';
-  const fallbackImg = categoryImages[categorySlug] || categoryImages['world'];
+  const fallbackImg = getCategoryFallbackImage(categorySlug, article._id || article.title);
+
+  const cleanTitle = decodeHTMLEntities(article.title);
+  const cleanDesc = decodeHTMLEntities(article.description);
 
   return (
     <motion.div
@@ -130,7 +120,7 @@ const ArticleCard = ({ article, isBookmarkedPage = false }) => {
       <div className="relative w-full h-52 overflow-hidden bg-[#F1EFE9] dark:bg-[#0B0F17]">
         <img
           src={article.imageUrl || fallbackImg}
-          alt={article.title}
+          alt={cleanTitle}
           className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           onError={(e) => {
             e.target.src = fallbackImg;
@@ -168,12 +158,12 @@ const ArticleCard = ({ article, isBookmarkedPage = false }) => {
 
           {/* Title */}
           <h3 className="font-black text-base leading-snug line-clamp-2 text-[#0F172A] dark:text-white group-hover:text-[#C89B63] transition-colors">
-            {article.title}
+            {cleanTitle}
           </h3>
 
           {/* Description */}
           <p className="text-xs text-[#6B7280] dark:text-gray-400 line-clamp-3 leading-relaxed">
-            {article.description}
+            {cleanDesc}
           </p>
         </div>
 
