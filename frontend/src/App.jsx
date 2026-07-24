@@ -26,7 +26,7 @@ function App() {
               <Navbar />
 
               {/* Core Screen Content Area */}
-              <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+              <main className="flex-1 w-full px-4 sm:px-8 lg:px-12 py-6">
                 <Routes>
                   {/* Public Feeds */}
                   <Route path="/" element={<Home />} />

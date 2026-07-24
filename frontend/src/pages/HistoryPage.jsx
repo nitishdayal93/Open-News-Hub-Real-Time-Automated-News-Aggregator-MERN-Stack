@@ -61,7 +61,7 @@ const HistoryPage = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="w-full px-2 sm:px-4 py-8 space-y-6">
       {/* Header bar */}
       <div className="flex justify-between items-center pb-4 border-b border-[#EAE6DF] dark:border-[#25334D]">
         <h1 className="text-2xl sm:text-3xl font-black flex items-center gap-2.5 text-[#0F172A] dark:text-white tracking-tight">

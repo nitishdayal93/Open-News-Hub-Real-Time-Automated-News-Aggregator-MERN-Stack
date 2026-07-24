@@ -146,7 +146,7 @@ const AdminDashboard = () => {
   const failedFeeds = stats?.sourcesHealth?.filter(s => !s.isHealthy) || [];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+    <div className="w-full px-2 sm:px-4 py-6 space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl sm:text-3xl font-black flex items-center gap-2.5 text-[#0F172A] dark:text-white tracking-tight">

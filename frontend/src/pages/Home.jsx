@@ -125,7 +125,7 @@ const Home = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-8">
+    <div className="w-full px-2 sm:px-4 py-4 space-y-8">
       {/* Luxury Editorial Hero Section */}
       <div className="relative py-12 px-6 sm:px-12 rounded-[30px] bg-white dark:bg-[#161F30] border border-[#EAE6DF] dark:border-[#25334D] shadow-[0_12px_40px_rgba(15,23,42,0.04)] overflow-hidden text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-8">
         <div className="glow-spot -top-20 -left-20 bg-[#C89B63]/20" />

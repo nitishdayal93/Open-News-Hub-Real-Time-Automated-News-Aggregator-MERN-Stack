@@ -114,7 +114,7 @@ const Navbar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav ref={navContainerRef} className="sticky top-4 z-50 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
+    <nav ref={navContainerRef} className="sticky top-4 z-50 w-full px-4 sm:px-8 lg:px-12 mb-6">
       <div className="rounded-full backdrop-blur-xl bg-white/80 dark:bg-[#161F30]/80 border border-[#EAE6DF] dark:border-[#25334D] shadow-[0_10px_30px_rgba(15,23,42,0.05)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.35)] px-4 sm:px-6 py-2.5 transition-all">
         <div className="flex h-12 items-center justify-between">
           {/* Logo */}
